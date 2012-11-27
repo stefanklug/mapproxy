@@ -464,6 +464,8 @@ mapproxy_yaml_spec = {
                 'use_mapnik2': bool(),
                 'scale_factor': number(),
             }),
+            'generic': {
+            },
             'debug': {
             },
         })
