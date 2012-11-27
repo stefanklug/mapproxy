@@ -350,6 +350,8 @@ mapproxy_yaml_spec = {
                 'layers': one_of(str(), [str()]),
                 'use_mapnik2': bool(),
             }),
+            'generic': {
+            },
             'debug': {
             },
         })

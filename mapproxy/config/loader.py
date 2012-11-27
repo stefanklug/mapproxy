@@ -803,6 +803,31 @@ class MapnikSourceConfiguration(SourceConfiguration):
         return MapnikSource(mapfile, layers=layers, image_opts=image_opts,
             coverage=coverage, res_range=res_range, lock=lock)
 
+
+class GenericSourceConfiguration(SourceConfiguration):
+    source_type = ('generic',)
+
+    def source(self, params=None):
+        classname = self.conf.get('class')
+        if not classname:
+            raise ConfigurationError('class must be specified.')
+        
+        #trying to import the given class
+        parts = classname.rsplit('.',1)
+        if len(parts) != 2:
+            raise ConfigurationError('classname must contain a dot')
+
+        module = __import__(parts[0], fromlist=[parts[1]])
+        if not module:
+            raise ConfigurationError('couldn\'t load module '+parts[0])
+
+        clazz = getattr(module, parts[1])
+        if not clazz:
+            raise ConfigurationError('couldn\'t find class '+classname)
+
+        return clazz(self)
+
+
 class TileSourceConfiguration(SourceConfiguration):
     supports_meta_tiles = False
     source_type = ('tile',)
@@ -858,6 +883,7 @@ source_configuration_types = {
     'debug': DebugSourceConfiguration,
     'mapserver': MapServerSourceConfiguration,
     'mapnik': MapnikSourceConfiguration,
+    'generic':GenericSourceConfiguration,
 }
 
 
